@@ -1,4 +1,6 @@
 <h1>
-  Generating Dynamic Component in some time
-  <app-child></app-child>
+  <button (click)="genComponent()">Generate Comp </button>
+  <button (click)="removeComponent()">Remove Comp </button>
+
+  <app-child [callComp]="genComp"></app-child>
 </h1>
