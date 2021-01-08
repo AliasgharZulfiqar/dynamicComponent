@@ -1,6 +1,9 @@
 <h1>
-  <button (click)="genComponent()">Generate Comp </button>
-  <button (click)="removeComponent()">Remove Comp </button>
-
+  Generate Dynamic Components
+ 
+  </h1>
+  <div>
+    <button class="btn btn-light" (click)="genComponent()">Generate Comp </button>
+    <button class="btn btn-danger" (click)="removeComponent()">Remove Comp </button>
+  </div>
   <app-child [callComp]="genComp"></app-child>
-</h1>

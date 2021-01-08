@@ -1,5 +1,5 @@
-import { Component, ComponentFactoryResolver,ComponentRef, Input, OnChanges, OnInit, SimpleChange, SimpleChanges, ViewChild, ViewContainerRef } from '@angular/core';
-import { resolve } from 'url';
+import { Component, ComponentFactoryResolver, Input, OnChanges, OnInit, SimpleChanges, ViewChild, ViewContainerRef } from '@angular/core';
+import { NgOnChangesFeature } from '@angular/core/src/render3';
 import { DynamicComponent } from '../dynamic/dynamic.component';
 
 @Component({
@@ -10,32 +10,26 @@ import { DynamicComponent } from '../dynamic/dynamic.component';
 export class ChildComponent implements OnInit,OnChanges {
 @Input() callComp : boolean;
 @ViewChild('insert',{read:ViewContainerRef}) vf : ViewContainerRef;
-compRef : any;
-resolve:any;
+compRef;genCom;
   constructor(private componentFactoryResolver:ComponentFactoryResolver) { 
   }
   ngOnChanges(changes: SimpleChanges): void {
-    if(changes.callComp.currentValue){
-      this.resolve = this.componentFactoryResolver.resolveComponentFactory(DynamicComponent);
-   this.compRef  = this.vf.createComponent(this.resolve);
-  
-    }else{
-      if(this.compRef){
-      this.compRef.destroy();
-      }
-    }
+  if(changes.callComp.currentValue){
+    let secondComp = this.componentFactoryResolver.resolveComponentFactory(DynamicComponent);
+   this.compRef= this.vf.createComponent(secondComp);
+   this.compRef.instance.value = 1;
+    this.compRef.instance.throwVal.subscribe(response=>{alert(response)})
+
+  }else{
+    this.compRef.destroy();
+  }
   }
 
   ngOnInit() {
-   
  
   }
 ngAfterViewInit(){
 
-//   this.resolve = this.componentFactoryResolver.resolveComponentFactory(DynamicComponent);
-//  this.compRef  = this.vf.createComponent(this.resolve);
 
 }
-
-
 }

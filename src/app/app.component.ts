@@ -6,14 +6,12 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  genComp :boolean = false;
+  genComp :boolean = true;
   title = 'dynamicComp';
   genComponent(){
     this.genComp = true;
-  
   }
   removeComponent(){
     this.genComp = false;
-  
   }
 }
