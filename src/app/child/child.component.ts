@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Compiler, Component, ComponentFactoryResolver, EventEmitter, Input, NgModule, OnChanges, OnInit, Output, SimpleChanges, ViewChild, ViewContainerRef } from '@angular/core';
 import { NgOnChangesFeature } from '@angular/core/src/render3';
-import { FormsModule } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormControlName, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { generate } from 'rxjs';
 import { DynamicComponent } from '../dynamic/dynamic.component';
@@ -12,23 +12,23 @@ import { DynamicComponent } from '../dynamic/dynamic.component';
   styleUrls: ["./child.component.css"],
 })
 export class ChildComponent implements OnInit, OnChanges {
-  @Input() callComp: boolean;
   @Input() formattedText: string;
+  // @Input() testForm  : FormGroup;
   @ViewChild("insert", { read: ViewContainerRef }) vf: ViewContainerRef;
+  @Input() testingForm : FormGroup;
   @Output() fireMessage: EventEmitter<any> = new EventEmitter();
-
   //This is Dynamic Rendering
   //@ViewChild('second',{read:ViewContainerRef}) svf : ViewContainerRef;
-
   compRef;
   genCom;
-  componentOnDemand;
   constructor(
     private componentFactoryResolver: ComponentFactoryResolver,
     private compiler: Compiler
-  ) {}
+  ) {
+  }
   ngOnChanges(changes: SimpleChanges): void {
-    this.generateDynamicComp(this.formattedText, this.fireMessage);
+    
+    this.generateDynamicComp(this.formattedText, this.fireMessage,this.testingForm);
 
     // if(changes.callComp.currentValue){
     //   this.callComp = changes.callComp.currentValue;
@@ -53,19 +53,65 @@ export class ChildComponent implements OnInit, OnChanges {
     //  this.compRef.instance.throwVal.subscribe(response=>{alert(response)})
   }
   //This function generates a dynamic component using JIT Compiler on run time . . .
-  generateDynamicComp(value: string, emitter: EventEmitter<any>) {
+  generateDynamicComp(value: string, emitter: EventEmitter<any>,compForm : FormGroup) {
     const componentOnDemand: any = Component({
       template: value,
     })(
-      class componentOnDemand implements OnInit {
-        constructor() {}
-        ngOnInit() {
-          emitter.emit("Fired from dynamic component" + value);
+      class componentOnDemand implements OnInit,OnChanges {
+        testForm :FormGroup;
+        constructor() {
+          this.setupFormGroup();
+
         }
-      }
+        ngOnChanges(){
+       
+        }
+        ngOnInit() {
+         
+      
+       
+          emitter.emit("Fired from dynamic component " + value);
+         
+        }
+        setupFormGroup(): void {
+          this.testForm = compForm
+          this.validateForm(this.testForm)
+//           if (this.testForm) {
+//             this.validateForm(this.testForm);
+//             this.onValueChanges();
+        
+         }
+       
+
+        validateForm(form: any): boolean {
+          for (const name in form.controls) {
+            if (form.controls[name] instanceof FormArray) {
+              form.controls[name].controls.forEach((formGroup: FormGroup) => {
+                this.validateForm(formGroup);
+              });
+              this.validateForm(form.controls[name]);
+            } else if (form.controls[name] instanceof FormGroup) {
+              this.validateForm(form.controls[name]);
+            } else if (form.controls[name] && form.controls[name].enabled) {
+              form.controls[name].updateValueAndValidity();
+              form.controls[name].markAsTouched();
+              form.controls[name].markAsDirty();
+            }
+          }
+          console.log(form);
+          return form.valid;
+        }
+
+//         onValueChanges(): void {
+// this.testForm.valueChanges.subscribe(val => {
+//          console.log(val)
+//           });
+         }
+    //}
+      
     );
     const dynamicModule = NgModule({
-      imports: [CommonModule, FormsModule, BrowserModule],
+      imports: [CommonModule, FormsModule, BrowserModule,ReactiveFormsModule],
       declarations: [componentOnDemand],
     })(class DynamicModule {});
     this.compiler

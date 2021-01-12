@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormControlName, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -11,9 +11,13 @@ export class AppComponent {
   title = 'dynamicComp';
   formattedText : string = '';
   dynamicForm : FormGroup;
+  formObj : FormGroup;
+  testForm : FormGroup;
+  test :FormControlName
+  compForm : FormGroup;
   constructor(private fb : FormBuilder){
   this.dynamicForm = this.fb.group({
-    formattedText : ['',[Validators.required]]
+    formattedText : ['<form [formGroup]="testForm"><input type="text" formControlName="test"/><input type="number" maxLength=10 formControlName="test"/></form>']
   })
   }
   formSubmission(data){
@@ -27,11 +31,16 @@ export class AppComponent {
   }
   getFormData(){
     this.formattedText = this.dynamicForm.value.formattedText;
+  //  this.dynamicForm.addControl('testing',new FormControl(''))
+   console.log(this.dynamicForm)
+   this.compForm = this.dynamicForm;
   }
-  insertButton(){
-    this.formattedText += '<button class="btn btn-danger">Added Dynamically</button>'
-  }
+
   getMessage(data){
     alert(data)
   }
+  // updateElement(){
+  //   this.dynamicForm.get('testing').setErrors({required:true});
+  //   console.log(this.dynamicForm.get('testing'))
+  // }
 }

@@ -5,9 +5,9 @@
   <br>
   <div style="text-align: center;">
     <form class="form-group" [formGroup]="dynamicForm">
-      <input class="form-control" type="text" formControlName="formattedText" placeholder="Insert Formatted text">
+      <input class="form-control" type="text" formControlName="formattedText"  placeholder="Insert Formatted text">
     </form>
     <button class="btn btn-success" [disabled]="!dynamicForm.valid" (click)="getFormData()">Submit</button>
   </div>
-  <app-child (fireMessage)="getMessage($event)" *ngIf="formattedText!=''" [formattedText]="formattedText"></app-child>
- 
+  <app-child (fireMessage)="getMessage($event)"  *ngIf="formattedText!=''" [testingForm]="compForm"  [formattedText]="formattedText"></app-child>
+ <!-- <button (click)="updateElement()">Required</button> -->
