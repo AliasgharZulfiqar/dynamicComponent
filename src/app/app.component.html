@@ -1,9 +1,13 @@
 <h1>
-  Generate Dynamic Components
+  Generate Dynamic Component
  
   </h1>
-  <div>
-    <button class="btn btn-light" (click)="genComponent()">Generate Comp </button>
-    <button class="btn btn-danger" (click)="removeComponent()">Remove Comp </button>
+  <br>
+  <div style="text-align: center;">
+    <form class="form-group" [formGroup]="dynamicForm">
+      <input class="form-control" type="text" formControlName="formattedText" placeholder="Insert Formatted text">
+    </form>
+    <button class="btn btn-success" [disabled]="!dynamicForm.valid" (click)="getFormData()">Submit</button>
   </div>
-  <app-child [callComp]="genComp"></app-child>
+  <app-child (fireMessage)="getMessage($event)" *ngIf="formattedText!=''" [formattedText]="formattedText"></app-child>
+ 
